@@ -26,9 +26,9 @@ class FeatureEngineer:
 
     def create_features(self):
         train_features = self.add_features(self.train_df)
-        train_features.to_csv(r'D:\codeC\stock_predict\data\feature\train_features.csv')
+        train_features.to_csv(r'D:\codeC\stock-prediction\stock_predict\data\feature\train_features.csv')
         test_features = self.add_features(self.test_df)
-        test_features.to_csv(r'D:\codeC\stock_predict\data\feature\test_features.csv')
+        test_features.to_csv(r'D:\codeC\stock-prediction\stock_predict\data\feature\test_features.csv')
         feature_names = ['开盘', '收盘', '最高', '最低', '成交量', '成交额', '换手率',
                            '价格变化', 'HL比例', '价格位置', 'MA5', 'MA10', 'MA20',
                            'volume_MA5', 'volume_ratio', 'volatility', 'day_of_week', 'month']

@@ -2,9 +2,9 @@ import os
 
 def delete_file(num):
     if num == "1":
-        paths=[r"D:\codeC\stock_predict\outputs\result.csv",
-               r"D:\codeC\stock_predict\data\feature\test_features.csv",
-               r"D:\codeC\stock_predict\data\feature\train_features.csv"]
+        paths=[r"D:\codeC\stock-prediction\stock_predict\outputs\results\result.csv",
+               r"D:\codeC\stock-prediction\stock_predict\data\feature\test_features.csv",
+               r"D:\codeC\stock-prediction\stock_predict\data\feature\train_features.csv"]
         for path in paths:
             try:
                 if os.path.exists(path):
@@ -15,8 +15,8 @@ def delete_file(num):
             except Exception as e:
                 print(f"{e}")
     elif num == "2":
-        paths = [r"D:\codeC\stock_predict\data\feature\test_features.csv",
-                 r"D:\codeC\stock_predict\data\feature\train_features.csv"]
+        paths = [r"D:\codeC\stock-prediction\stock_predict\data\feature\test_features.csv",
+                 r"D:\codeC\stock-prediction\stock_predict\data\feature\train_features.csv"]
         for path in paths:
             try:
                 if os.path.exists(path):
