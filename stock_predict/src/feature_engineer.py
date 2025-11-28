@@ -2,7 +2,6 @@
 #3
 
 import pandas as pd
-#from ..config.config import DATA_PATHS
 
 class FeatureEngineer:
     def __init__(self, train_df, test_df):
@@ -44,4 +43,7 @@ class FeatureEngineer:
         y_train = train_features['target']
         X_test = test_features[feature_names].fillna(0)
         return X_train, y_train, X_test,test_features,feature_names
+
+if __name__ == '__main__':
+    pass
 

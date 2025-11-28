@@ -52,12 +52,12 @@ class ModelTrainer:
             )
             best_iterations.append(model.best_iteration)
         print(f"Best iterations: {best_iterations}")
-        #训练模型
+
         params = self._get_params()
         params['n_estimators'] = int(np.mean(best_iterations)) + 10
         final_model = xgb.XGBRegressor(**params)
         final_model.fit(self.X_train, self.y_train)
-        # 保存模型
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         model_filename = f"xgb_model_{timestamp}.pkl"
         model_path = rf"D:\codeC\stock-prediction\stock_predict\outputs\models\{model_filename}"
@@ -67,67 +67,67 @@ class ModelTrainer:
         return final_model
 
 
-    def comprehensive_data_check(self):
-        print("=== 数据全面检查 ===")
-        print(f"总样本数: {len(self.X_train):,}")
-        print(f"特征数: {len(self.X_train.columns)}")
-        print(f"目标变量名称: {self.y_train.name if hasattr(self.y_train, 'name') else 'Unknown'}")
+    # def comprehensive_data_check(self):
+    #     print("=== 数据全面检查 ===")
+    #     print(f"总样本数: {len(self.X_train):,}")
+    #     print(f"特征数: {len(self.X_train.columns)}")
+    #     print(f"目标变量名称: {self.y_train.name if hasattr(self.y_train, 'name') else 'Unknown'}")
+    #
+    #     # 检查目标变量
+    #     print(f"\n目标变量统计:")
+    #     print(f"  范围: [{self.y_train.min():.6f}, {self.y_train.max():.6f}]")
+    #     print(f"  均值: {self.y_train.mean():.6f} ± {self.y_train.std():.6f}")
+    #     print(f"  中位数: {self.y_train.median():.6f}")
+    #
+    #     # 检查分位数
+    #     quantiles = [0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99]
+    #     for q in quantiles:
+    #         print(f"  {q * 100:2.0f}%分位数: {self.y_train.quantile(q):.6f}")
+    #
+    #     # 检查异常值
+    #     q1, q3 = self.y_train.quantile(0.25), self.y_train.quantile(0.75)
+    #     iqr = q3 - q1
+    #     lower, upper = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    #     outliers = self.y_train[(self.y_train < lower) | (self.y_train > upper)]
+    #     print(f"  异常值数量: {len(outliers):,} ({len(outliers) / len(self.y_train) * 100:.2f}%)")
+    #
+    #     # 检查特征尺度
+    #     print(f"\n特征尺度检查:")
+    #     for col in self.X_train.columns[:3]:  # 只看前3个特征
+    #         if self.X_train[col].dtype in ['float64', 'int64']:
+    #             print(f"  {col}: [{self.X_train[col].min():.4f}, {self.X_train[col].max():.4f}]")
 
-        # 检查目标变量
-        print(f"\n目标变量统计:")
-        print(f"  范围: [{self.y_train.min():.6f}, {self.y_train.max():.6f}]")
-        print(f"  均值: {self.y_train.mean():.6f} ± {self.y_train.std():.6f}")
-        print(f"  中位数: {self.y_train.median():.6f}")
 
-        # 检查分位数
-        quantiles = [0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99]
-        for q in quantiles:
-            print(f"  {q * 100:2.0f}%分位数: {self.y_train.quantile(q):.6f}")
-
-        # 检查异常值
-        q1, q3 = self.y_train.quantile(0.25), self.y_train.quantile(0.75)
-        iqr = q3 - q1
-        lower, upper = q1 - 1.5 * iqr, q3 + 1.5 * iqr
-        outliers = self.y_train[(self.y_train < lower) | (self.y_train > upper)]
-        print(f"  异常值数量: {len(outliers):,} ({len(outliers) / len(self.y_train) * 100:.2f}%)")
-
-        # 检查特征尺度
-        print(f"\n特征尺度检查:")
-        for col in self.X_train.columns[:3]:  # 只看前3个特征
-            if self.X_train[col].dtype in ['float64', 'int64']:
-                print(f"  {col}: [{self.X_train[col].min():.4f}, {self.X_train[col].max():.4f}]")
-
-
-    def check_data_leakage(self):
-        """检查是否存在数据泄露"""
-        print("\n=== 数据泄露检查 ===")
-
-        # 检查目标变量是否在特征中
-        target_in_features = self.y_train.name in self.X_train.columns if hasattr(self.y_train, 'name') else False
-        print(f"目标变量是否在特征中: {target_in_features}")
-
-        # 检查特征与目标的相关性
-        if len(self.X_train) > 10000:
-            sample_idx = np.random.choice(len(self.X_train), 10000, replace=False)
-            X_sample = self.X_train.iloc[sample_idx]
-            y_sample = self.y_train.iloc[sample_idx]
-        else:
-            X_sample = self.X_train
-            y_sample = self.y_train
-
-        # 计算数值特征的相关性
-        numeric_cols = X_sample.select_dtypes(include=[np.number]).columns
-        if len(numeric_cols) > 0:
-            correlations = []
-            for col in numeric_cols[:10]:  # 只看前10个特征
-                corr = np.corrcoef(X_sample[col], y_sample)[0, 1]
-                correlations.append((col, corr))
-
-            # 按相关性绝对值排序
-            correlations.sort(key=lambda x: abs(x[1]), reverse=True)
-            print("特征与目标变量的相关性 (前5):")
-            for col, corr in correlations[:5]:
-                print(f"  {col}: {corr:.4f}")
+    # def check_data_leakage(self):
+    #     """检查是否存在数据泄露"""
+    #     print("\n=== 数据泄露检查 ===")
+    #
+    #     # 检查目标变量是否在特征中
+    #     target_in_features = self.y_train.name in self.X_train.columns if hasattr(self.y_train, 'name') else False
+    #     print(f"目标变量是否在特征中: {target_in_features}")
+    #
+    #     # 检查特征与目标的相关性
+    #     if len(self.X_train) > 10000:
+    #         sample_idx = np.random.choice(len(self.X_train), 10000, replace=False)
+    #         X_sample = self.X_train.iloc[sample_idx]
+    #         y_sample = self.y_train.iloc[sample_idx]
+    #     else:
+    #         X_sample = self.X_train
+    #         y_sample = self.y_train
+    #
+    #     # 计算数值特征的相关性
+    #     numeric_cols = X_sample.select_dtypes(include=[np.number]).columns
+    #     if len(numeric_cols) > 0:
+    #         correlations = []
+    #         for col in numeric_cols[:10]:  # 只看前10个特征
+    #             corr = np.corrcoef(X_sample[col], y_sample)[0, 1]
+    #             correlations.append((col, corr))
+    #
+    #         # 按相关性绝对值排序
+    #         correlations.sort(key=lambda x: abs(x[1]), reverse=True)
+    #         print("特征与目标变量的相关性 (前5):")
+    #         for col, corr in correlations[:5]:
+    #             print(f"  {col}: {corr:.4f}")
 
 
 

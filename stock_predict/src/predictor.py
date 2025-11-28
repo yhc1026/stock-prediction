@@ -33,11 +33,11 @@ class Predictor:
     def save_results(self,top_stocks, bottom_stocks):
         os.makedirs('outputs', exist_ok=True)
         results = []
-        results.append("top_stocks")
-        for i, stock in enumerate(top_stocks, 1):
-            results.append({'排名': i, '股票代码': stock})
-        results.append("bottom_stocks")
-        for i, stock in enumerate(bottom_stocks, 1):
-            results.append({'排名': i, '股票代码': stock})
+        results.append(["涨幅最大股票代码", "涨幅最小股票代码"])
+        for i in range(10):
+            results.append([top_stocks[i],bottom_stocks[i]])
         result_df = pd.DataFrame(results)
-        result_df.to_csv(self.output, index=False, encoding='utf-8-sig')
+        result_df.to_csv(self.output, index=False, encoding='utf-8-sig', header=False)
+
+if __name__ == '__main__':
+    pass
