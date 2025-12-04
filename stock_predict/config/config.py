@@ -1,7 +1,7 @@
 DATA_PATHS = {
     'train': r'D:\codeC\stock-prediction\stock_predict\data\source\train.csv',
     'test': r'D:\codeC\stock-prediction\stock_predict\data\source\test.csv',
-    'output': r'D:\codeC\stock-prediction\stock_predict\outputs\results\result.csv',
+    'output': r'D:\codeC\stock-prediction\stock_predict\outputs\results',
     'features': r'D:\codeC\stock-prediction\stock_predict\data\feature\features.csv'
 }
 
@@ -16,7 +16,7 @@ MODEL_CONFIGS={
     'reg_alpha': 0.5,
     'reg_lambda': 2,
     'gamma': 0.1,
-    'random_state': 42,
+    #'random_state': 42,
     'n_estimators': 1000,
     'tree_method': 'hist',
     'device': 'cuda:0',
